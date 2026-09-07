@@ -1,15 +1,30 @@
 <!doctype html>
 <html>
     <head>
-        <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
-        <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
-        <script src="https://raw.githack.com/donmccurdy/aframe-extras/master/dist/aframe-extras.loaders.min.js"></script>
-        <script src="https://raw.githack.com/AR-js-org/studio-backend/master/src/modules/marker/tools/gesture-detector.js"></script>
-        <script src="https://raw.githack.com/AR-js-org/studio-backend/master/src/modules/marker/tools/gesture-handler.js"></script>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <title>Marker AR</title>
+        <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+        <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.8/aframe/build/aframe-ar.js"></script>
+        <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.7.0/dist/aframe-extras.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+        <script src="ar-interaction.js"></script>
+        <style>
+            body { margin: 0; overflow: hidden; font-family: sans-serif; }
+            #status {
+                position: fixed; left: 50%; bottom: 16px; z-index: 10;
+                transform: translateX(-50%); max-width: calc(100% - 32px);
+                padding: 9px 14px; border-radius: 20px;
+                color: white; background: rgba(0, 0, 0, .62);
+                text-align: center; pointer-events: none;
+            }
+            #status.ready { opacity: 0; transition: opacity .8s 2s; }
+            #status.error { bottom: auto; top: 16px; background: #a51d1d; }
+        </style>
     </head>
 
-    <body style="margin: 0; overflow: hidden;">
+    <body>
+        <div id="status">กำลังเตรียมไฟล์ AR…</div>
         <a-scene
             vr-mode-ui="enabled: false;"
             loading-screen="enabled: false;"
@@ -17,7 +32,6 @@
             arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;"
             id="scene"
             embedded
-            gesture-detector
         >
             <a-assets id="asset-library"></a-assets>
 

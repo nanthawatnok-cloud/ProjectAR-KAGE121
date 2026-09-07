@@ -1,6 +1,8 @@
 (() => {
+    "use strict";
     const assetLibrary = document.getElementById("asset-library");
     const scene = document.getElementById("scene");
+    const status = document.getElementById("status");
     const supportedModels = [".gltf", ".glb", ".zip"];
     const supportedImages = [".jpg", ".jpeg", ".png", ".gif"];
     const supportedVideos = [".mp4"];
@@ -60,6 +62,8 @@
             element.setAttribute("loop", "true");
             element.setAttribute("muted", "true");
             element.setAttribute("playsinline", "true");
+            element.muted = true;
+            element.playsInline = true;
         }
 
         if (!element) return null;
@@ -68,7 +72,18 @@
             ? await getZipModelUrl(asset.file)
             : `assets/${encodeURIComponent(asset.file)}`;
         assetLibrary.appendChild(element);
-        return { kind, id };
+        return { kind, id, element };
+    }
+
+    function preserveAspectRatio(media, source, fallback) {
+        const update = () => {
+            const width = source.naturalWidth || source.videoWidth;
+            const height = source.naturalHeight || source.videoHeight;
+            media.setAttribute("height", String(width && height ? height / width : fallback));
+        };
+        update();
+        source.addEventListener("load", update, { once: true });
+        source.addEventListener("loadedmetadata", update, { once: true });
     }
 
     function createMarker(asset, loadedAsset) {
@@ -77,33 +92,37 @@
         marker.setAttribute("type", "pattern");
         marker.setAttribute("preset", "custom");
         marker.setAttribute("url", `assets/${encodeURIComponent(asset.marker)}`);
-        marker.setAttribute("raycaster", "objects: .clickable");
         marker.setAttribute("emitevents", "true");
-        marker.setAttribute("cursor", "fuse: false; rayOrigin: mouse;");
 
-        let content;
+        const content = document.createElement("a-entity");
+        content.classList.add("clickable");
+        content.setAttribute("ar-manipulable", "");
+
+        let media;
         if (loadedAsset.kind === "model") {
-            content = document.createElement("a-entity");
-            content.setAttribute("gltf-model", `#${loadedAsset.id}`);
-            content.setAttribute("animation-mixer", "loop: repeat");
-            content.setAttribute("scale", "0.5800801371315691 0.5800801371315691 0.5800801371315691");
-            content.setAttribute("gesture-handler", "");
+            media = document.createElement("a-entity");
+            media.setAttribute("gltf-model", `#${loadedAsset.id}`);
+            media.setAttribute("animation-mixer", "clip: *; loop: repeat");
+            media.setAttribute("fit-model", "size: 1");
         } else if (loadedAsset.kind === "image") {
-            content = document.createElement("a-image");
-            content.setAttribute("src", `#${loadedAsset.id}`);
-            content.setAttribute("width", "1");
-            content.setAttribute("height", "1");
+            media = document.createElement("a-image");
+            media.setAttribute("src", `#${loadedAsset.id}`);
+            media.setAttribute("width", "1");
+            media.setAttribute("height", "1");
+            media.setAttribute("rotation", "-90 0 0");
+            media.setAttribute("position", "0 0.01 0");
+            preserveAspectRatio(media, loadedAsset.element, 1);
         } else {
-            content = document.createElement("a-video");
-            content.setAttribute("src", `#${loadedAsset.id}`);
-            content.setAttribute("width", "1");
-            content.setAttribute("height", "0.5625");
-            content.setAttribute("autoplay", "true");
-            content.setAttribute("loop", "true");
-            content.setAttribute("muted", "true");
+            media = document.createElement("a-video");
+            media.setAttribute("src", `#${loadedAsset.id}`);
+            media.setAttribute("width", "1");
+            media.setAttribute("height", "0.5625");
+            media.setAttribute("rotation", "-90 0 0");
+            media.setAttribute("position", "0 0.01 0");
+            preserveAspectRatio(media, loadedAsset.element, 0.5625);
         }
 
-        content.classList.add("clickable");
+        content.appendChild(media);
         marker.appendChild(content);
         scene.insertBefore(marker, scene.querySelector("[camera]"));
     }
@@ -113,16 +132,23 @@
         if (!response.ok) throw new Error(`Cannot load assets/manifest.json (${response.status})`);
 
         const manifest = await response.json();
+        if (!Array.isArray(manifest.assets) || manifest.assets.length === 0) {
+            throw new Error("ไม่พบคู่ไฟล์ asset และ marker ใน manifest.json");
+        }
         await Promise.all(manifest.assets.map(async (asset) => {
             const loadedAsset = await createAssetElement(asset);
             if (loadedAsset && asset.marker) createMarker(asset, loadedAsset);
         }));
 
         scene.emit("assets-loaded");
+        status.textContent = `พร้อมใช้งาน ${manifest.assets.length} marker — แตะแล้วลาก หรือใช้ 2 นิ้วย่อ/ขยาย/หมุน`;
+        status.className = "ready";
     }
 
     loadAssets().catch((error) => {
         console.error("AR asset loader:", error);
+        status.textContent = `เปิด AR ไม่สำเร็จ: ${error.message}`;
+        status.className = "error";
         scene.emit("assets-load-error", { error });
     });
 })();
