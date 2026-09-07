@@ -19,13 +19,6 @@
             gesture-detector
         >
         <!-- marker 1 -->
-            <a-assets>
-                <a-asset-item
-                    id="animated-asset"
-                    src="assets/asset1.glb"
-                ></a-asset-item>
-            </a-assets>
-
             <a-marker
                 id="animated-marker"
                 type="pattern"
@@ -36,15 +29,15 @@
                 cursor="fuse: false; rayOrigin: mouse;"
                 id="markerA"
             >
+                <a-assets>
+                    <a-asset-item
+                        id="animated-asset"
+                        src="assets/asset1.glb"
+                    ></a-asset-item>
+                </a-assets>
+            </a-marker>
 
             <!-- marker 2 -->
-            <a-assets>
-                <a-asset-item
-                    id="animated-asset"
-                    src="assets/asset2.png"
-                ></a-asset-item>
-            </a-assets>
-
             <a-marker
                 id="animated-marker"
                 type="pattern"
@@ -55,15 +48,15 @@
                 cursor="fuse: false; rayOrigin: mouse;"
                 id="markerB"
             >
+                <a-assets>
+                    <a-asset-item
+                        id="animated-asset"
+                        src="assets/asset2.glb"
+                    ></a-asset-item>
+                </a-assets>
+            </a-marker>
 
             <!-- marker  3 -->
-             <a-assets>
-                <a-asset-item
-                    id="animated-asset"
-                    src="assets/asset3.mp4"
-                ></a-asset-item>
-            </a-assets>
-
             <a-marker
                 id="animated-marker"
                 type="pattern"
@@ -74,15 +67,12 @@
                 cursor="fuse: false; rayOrigin: mouse;"
                 id="markerC"
             >
-
-                <a-entity
-                    id="bowser-model"
-                    scale="0.5800801371315691 0.5800801371315691 0.5800801371315691"
-                    animation-mixer="loop: repeat"
-                    gltf-model="#animated-asset"
-                    class="clickable"
-                    gesture-handler
-                ></a-entity>
+                <a-assets>
+                    <a-asset-item
+                        id="animated-asset"
+                        src="assets/asset3.mp4"
+                    ></a-asset-item>
+                </a-assets>
             </a-marker>
 
             <a-entity camera></a-entity>
