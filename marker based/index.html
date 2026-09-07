@@ -1,30 +1,14 @@
 <!doctype html>
 <html>
     <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-        <title>Marker AR</title>
-        <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
-        <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.8/aframe/build/aframe-ar.js"></script>
-        <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.7.0/dist/aframe-extras.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
-        <script src="ar-interaction.js"></script>
-        <style>
-            body { margin: 0; overflow: hidden; font-family: sans-serif; }
-            #status {
-                position: fixed; left: 50%; bottom: 16px; z-index: 10;
-                transform: translateX(-50%); max-width: calc(100% - 32px);
-                padding: 9px 14px; border-radius: 20px;
-                color: white; background: rgba(0, 0, 0, .62);
-                text-align: center; pointer-events: none;
-            }
-            #status.ready { opacity: 0; transition: opacity .8s 2s; }
-            #status.error { bottom: auto; top: 16px; background: #a51d1d; }
-        </style>
+        <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
+        <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+        <script src="https://raw.githack.com/donmccurdy/aframe-extras/master/dist/aframe-extras.loaders.min.js"></script>
+        <script src="https://raw.githack.com/AR-js-org/studio-backend/master/src/modules/marker/tools/gesture-detector.js"></script>
+        <script src="https://raw.githack.com/AR-js-org/studio-backend/master/src/modules/marker/tools/gesture-handler.js"></script>
     </head>
 
-    <body>
-        <div id="status">กำลังเตรียมไฟล์ AR…</div>
+    <body style="margin: 0; overflow: hidden;">
         <a-scene
             vr-mode-ui="enabled: false;"
             loading-screen="enabled: false;"
@@ -32,11 +16,75 @@
             arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;"
             id="scene"
             embedded
+            gesture-detector
         >
-            <a-assets id="asset-library"></a-assets>
+            <a-assets>
+                <a-asset-item
+                    id="animated-asset"
+                    src="assets/asset1.glb"
+                ></a-asset-item>
+            </a-assets>
+
+            <a-marker
+                id="animated-marker"
+                type="pattern"
+                preset="custom"
+                url="assets/marker1.patt"
+                raycaster="objects: .clickable"
+                emitevents="true"
+                cursor="fuse: false; rayOrigin: mouse;"
+                id="markerA"
+            >
+
+            <!-- marker 2 -->
+            <a-assets>
+                <a-asset-item
+                    id="animated-asset"
+                    src="assets/asset2.png"
+                ></a-asset-item>
+            </a-assets>
+
+            <a-marker
+                id="animated-marker"
+                type="pattern"
+                preset="custom"
+                url="assets/marker2.patt"
+                raycaster="objects: .clickable"
+                emitevents="true"
+                cursor="fuse: false; rayOrigin: mouse;"
+                id="markerA"
+            >
+
+            <!-- marker  3 -->
+             <a-assets>
+                <a-asset-item
+                    id="animated-asset"
+                    src="assets/asset3.mp4"
+                ></a-asset-item>
+            </a-assets>
+
+            <a-marker
+                id="animated-marker"
+                type="pattern"
+                preset="custom"
+                url="assets/marker4.patt"
+                raycaster="objects: .clickable"
+                emitevents="true"
+                cursor="fuse: false; rayOrigin: mouse;"
+                id="markerA"
+            >
+
+                <a-entity
+                    id="bowser-model"
+                    scale="0.5800801371315691 0.5800801371315691 0.5800801371315691"
+                    animation-mixer="loop: repeat"
+                    gltf-model="#animated-asset"
+                    class="clickable"
+                    gesture-handler
+                ></a-entity>
+            </a-marker>
 
             <a-entity camera></a-entity>
         </a-scene>
-        <script src="assets-loader.js"></script>
     </body>
 </html>
