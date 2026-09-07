@@ -1,0 +1,19 @@
+{
+  "assets": [
+    {
+      "number": 1,
+      "file": "asset1.glb",
+      "marker": "marker1.patt"
+    },
+    {
+      "number": 2,
+      "file": "asset2.png",
+      "marker": "marker2.patt"
+    },
+    {
+      "number": 3,
+      "file": "asset3.mp4",
+      "marker": "marker3.patt"
+    }
+  ]
+}

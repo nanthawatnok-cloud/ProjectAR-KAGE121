@@ -1,0 +1,29 @@
+name: Update AR asset manifest
+
+on:
+  push:
+    paths:
+      - "marker based/assets/**"
+      - "marker based/tools/generate-assets-manifest.js"
+      - ".github/workflows/update-assets-manifest.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  update-manifest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate manifest
+        run: node "marker based/tools/generate-assets-manifest.js"
+
+      - name: Commit manifest when changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "marker based/assets/manifest.json"
+          git diff --cached --quiet || git commit -m "chore: update AR asset manifest [skip ci]"
+          git push
